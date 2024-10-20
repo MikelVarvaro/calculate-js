@@ -66,27 +66,38 @@ class Car {
     this.tankCapacity = car.tankCapacity;
     this.gasLeft = car.gasLeft;
     this.gasTank = function () {
-       return (this.gasLeft * this.tankCapacity) + "L in the tank";
+      if (this.tankCapacity == this.gasLeft * this.tankCapacity) {
+        return "Tank is Full";
+      }
+      return this.gasLeft * this.tankCapacity + "L left in the tank";
     };
     this.fuelEfficiency = car.fuelEfficiency / 100;
     this.drive = function (km) {
-      let gasNeeded = km * this.fuelEfficiency;
-      this.gasLeft < gasNeeded
-        ? (this.gasLeft = this.gasLeft - gasNeeded)
-        : console.log(
-            "you need to fill up the trip will take: " +
-              gasNeeded +
-              "L. You have: " +
-              this.gasTank +
-              "L left."
-          );
+      let gasNeeded = (km * this.fuelEfficiency) / this.tankCapacity;
+
+      if (this.gasLeft > gasNeeded || this.gasLeft - gasNeeded > 0) {
+        this.gasLeft -= gasNeeded;
+        return `you drove ` + km + "km and have ", this.gasTank();
+      } else {
+        return (
+          "you need to fill up the trip will take: " +
+          gasNeeded *  this.tankCapacity +
+          "L. and have " +
+          this.gasTank() +
+          " left."
+        );
+      }
     };
     this.fillUp = function (litres) {
-      this.tankCapacity > this.gasTank()
-        ? this.tankCapacity <= litres
-          ? (this.gasLeft =  1)
-          : (this.gasLeft = litres / this.tankCapacity)
-        : console.log("Gas Tank is Full");
+      if (this.tankCapacity > this.gasLeft * this.tankCapacity)
+        if (this.tankCapacity <= litres) {
+          this.gasLeft = 1;
+          return this.gasTank();
+        } else {
+          this.gasLeft += litres / this.tankCapacity;
+          return this.gasTank();
+        }
+      console.log("Gas Tank is Full");
     };
   }
 }
