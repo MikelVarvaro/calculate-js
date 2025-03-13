@@ -65,39 +65,49 @@ class Car {
     this.name = car.name;
     this.tankCapacity = car.tankCapacity;
     this.gasLeft = car.gasLeft;
+    this.fuelEfficiency = car.fuelEfficiency / 100;
+
     this.gasTank = function () {
       if (this.tankCapacity == this.gasLeft * this.tankCapacity) {
         return "Tank is Full";
       }
       return this.gasLeft * this.tankCapacity + "L left in the tank";
     };
-    this.fuelEfficiency = car.fuelEfficiency / 100;
+
     this.drive = function (km) {
       let gasNeeded = (km * this.fuelEfficiency) / this.tankCapacity;
 
-      if (this.gasLeft > gasNeeded || this.gasLeft - gasNeeded > 0) {
+      if (this.gasLeft >= gasNeeded) {
         this.gasLeft -= gasNeeded;
-        return `you drove ` + km + "km and have ", this.gasTank();
+        return `You drove ${km}km. ${this.gasTank()}`;
       } else {
-        return (
-          "you need to fill up the trip will take: " +
-          gasNeeded *  this.tankCapacity +
-          "L. and have " +
-          this.gasTank() +
-          " left."
-        );
+        return `You need more fuel. The trip requires ${
+          gasNeeded * this.tankCapacity
+        }L, but you only have ${this.gasTank()}.`;
       }
     };
+
     this.fillUp = function (litres) {
-      if (this.tankCapacity > this.gasLeft * this.tankCapacity)
-        if (this.tankCapacity <= litres) {
-          this.gasLeft = 1;
-          return this.gasTank();
-        } else {
-          this.gasLeft += litres / this.tankCapacity;
-          return this.gasTank();
-        }
-      console.log("Gas Tank is Full");
+      let fuelInLiters = this.gasLeft * this.tankCapacity;
+      if (fuelInLiters + litres >= this.tankCapacity) {
+        this.gasLeft = 1; // Tank is full
+        return "Gas Tank is Full";
+      } else {
+        this.gasLeft += litres / this.tankCapacity;
+        return this.gasTank();
+      }
+    };
+    this.distanceLeft = function () {
+      const fuelAvailable = this.gasLeft * this.tankCapacity; // Liters left
+
+      console.log(
+        this.gasLeft * this.tankCapacity +
+          "L Left" +
+          " " +
+          Math.round(fuelAvailable * (1 / this.fuelEfficiency)) +
+          "km Left"
+      ); // Distance left
+      return;
     };
   }
 }
@@ -109,3 +119,13 @@ const hyundai = new Car({
   tankCapacity: 47,
   fuelEfficiency: 5.7,
 });
+
+const matrix = new Car({
+  manufacture: "Toyota",
+  name: "Matrix",
+  tankCapacity: 50,
+  gasLeft: 1,
+  fuelEfficiency: 6.2,
+});
+
+// manufacture: "Toyota", name: 'Matrix', tankCapacity:50, gasLeft:1, fuelEfficiency: 6.2
